@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.input {
+  @apply h-14 w-[100%] rounded-[0.8rem] px-[1.6rem] border-2 border-slate-200 focus:outline-slate-500;
+}
+.submit_btn {
+  @apply h-14 w-[100%] rounded-lg text-white bg-slate-500;
+}
