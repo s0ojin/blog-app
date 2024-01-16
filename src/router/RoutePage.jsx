@@ -5,6 +5,8 @@ export default function RoutePage() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/" element={<Home />} />
+      <Route path="/mypage" element={<Mypage />} />
     </Routes>
   );
 }
