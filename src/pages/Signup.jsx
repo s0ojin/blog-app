@@ -1,4 +1,6 @@
 import { useForm } from "react-hook-form";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 
 export default function Signup() {
   const {
@@ -8,8 +10,12 @@ export default function Signup() {
     watch,
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      await createUserWithEmailAndPassword(auth, data.email, data.password);
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
@@ -17,13 +23,6 @@ export default function Signup() {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-4 min-w-[30rem] w-[70%]">
-        <label htmlFor="name">이름</label>
-        <input
-          id="name"
-          {...register("name", { required: true })}
-          placeholder="이름"
-          className="input"
-        />
         <label htmlFor="email">이메일</label>
         <input
           id="email"
@@ -44,7 +43,13 @@ export default function Signup() {
         <input
           id="password"
           type="password"
-          {...register("password", { required: true })}
+          {...register("password", {
+            required: true,
+            pattern: {
+              value: /.{6,}/,
+              message: "비밀번호는 6글자 이상으로 생성할 수 있습니다.",
+            },
+          })}
           placeholder="비밀번호"
           className="input"
         />
