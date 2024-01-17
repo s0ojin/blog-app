@@ -1,15 +1,32 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 
 export default function Login() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    await signInWithEmailAndPassword(auth, data.email, data.password)
+      .then((res) => {
+        if (res.operationType == "signIn") {
+          localStorage.setItem("userId", res.user.uid);
+          localStorage.setItem("accessToken", res.user.accessToken);
+          localStorage.setItem("refreshToken", res.user.refreshToken);
+          alert("로그인이 완료되었습니다.");
+          navigate("/");
+        }
+      })
+      .catch((err) => {
+        if (err.code == "auth/invalid-credential") {
+          alert("유효하지 않은 계정입니다. 아이디와 비밀번호를 확인해주세요.");
+        }
+      });
   };
 
   return (

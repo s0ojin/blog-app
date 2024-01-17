@@ -1,8 +1,10 @@
 import { useForm } from "react-hook-form";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -11,11 +13,21 @@ export default function Signup() {
   } = useForm();
 
   const onSubmit = async (data) => {
-    try {
-      await createUserWithEmailAndPassword(auth, data.email, data.password);
-    } catch (error) {
-      alert(error.message);
-    }
+    await createUserWithEmailAndPassword(auth, data.email, data.password)
+      .then((res) => {
+        if (res.operationType == "signIn") {
+          localStorage.setItem("userId", res.user.uid);
+          localStorage.setItem("accessToken", res.user.accessToken);
+          localStorage.setItem("refreshToken", res.user.refreshToken);
+          alert("회원가입이 완료되었습니다.");
+          navigate("/");
+        }
+      })
+      .catch((err) => {
+        if (err.code == "auth/email-already-in-use") {
+          alert("이미 존재하는 이메일입니다.");
+        }
+      });
   };
 
   return (
