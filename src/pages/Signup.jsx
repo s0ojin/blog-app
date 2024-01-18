@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 
@@ -19,6 +19,7 @@ export default function Signup() {
           localStorage.setItem("userId", res.user.uid);
           localStorage.setItem("accessToken", res.user.accessToken);
           localStorage.setItem("refreshToken", res.user.refreshToken);
+          updateProfile(auth.currentUser, { displayName: data.name });
           alert("회원가입이 완료되었습니다.");
           navigate("/");
         }
@@ -35,6 +36,13 @@ export default function Signup() {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-4 min-w-[30rem] w-[70%]">
+        <label htmlFor="name">이름</label>
+        <input
+          id="name"
+          {...register("name", { required: true })}
+          placeholder="이름"
+          className="input"
+        />
         <label htmlFor="email">이메일</label>
         <input
           id="email"
