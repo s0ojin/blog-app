@@ -4,6 +4,7 @@ import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import Home from "../pages/Home";
 import Mypage from "../pages/Mypage";
+import CreatePost from "../pages/CreatePost";
 
 export default function RoutePage() {
   return (
@@ -13,6 +14,7 @@ export default function RoutePage() {
       <Route element={<PrivateRoute authentication={true} />}>
         <Route path="/" element={<Home />} />
         <Route path="/mypage" element={<Mypage />} />
+        <Route path="/post/create" element={<CreatePost />} />
       </Route>
       {/* 로그아웃 필수 */}
       <Route element={<PrivateRoute authentication={false} />}>

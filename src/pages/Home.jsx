@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Carousel from "../components/Carousel";
 import { getDocs, query, collection } from "firebase/firestore";
 import { db } from "../firebase";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   const [postList, setPostList] = useState();
@@ -11,7 +12,10 @@ export default function Home() {
     const postsSnap = await getDocs(postsRef);
     const posts = [];
     postsSnap.forEach((post) => {
-      posts.push(post.data());
+      posts.push({
+        data: post.data(),
+        id: post.id,
+      });
     });
     setPostList(posts);
   };
@@ -25,19 +29,23 @@ export default function Home() {
       <Carousel />
       <ul className="grid grid-cols-3 gap-10 m-10 cursor-pointer">
         {postList &&
-          postList.map((post, idx) => (
+          postList.map((post) => (
             <li
-              key={idx}
+              key={post.id}
               className="flex flex-col max-h-[500px] shadow-lg rounded-2xl">
-              <img src={post.image} className="h-[45%] object-cover" />
-              <div className="h-[45%] p-4 flex flex-col">
-                <p className="font-bold text-[20px] mb-2">{post.title}</p>
-                <p className="">{post.content}</p>
-                <p className="mt-auto text-[14px] text-gray-400">
-                  {Date(post.createdAt)}
-                </p>
-              </div>
-              <p className="h-[10%] p-4">by. {post.author}</p>
+              <Link to={`/post/${post.id}`}>
+                <img src={post.data.image} className="h-[45%] object-cover" />
+                <div className="h-[45%] p-4 flex flex-col">
+                  <p className="font-bold text-[20px] mb-2">
+                    {post.data.title}
+                  </p>
+                  <p className="">{post.data.content}</p>
+                  <p className="mt-auto text-[14px] text-gray-400">
+                    {Date(post.data.createdAt)}
+                  </p>
+                </div>
+                <p className="h-[10%] p-4">by. {post.data.author}</p>
+              </Link>
             </li>
           ))}
       </ul>

@@ -1,13 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthState } from "../contexts/AuthContext";
-import { signOut } from "firebase/auth";
-import { auth } from "../firebase";
+/* import { signOut } from "firebase/auth";
+import { auth } from "../firebase"; */
 
 export default function Header() {
   const authState = useAuthState();
   const navigate = useNavigate();
 
-  const logoutHandler = () => {
+  // TODO: 로그아웃기능 마이페이지로 이동
+  /*   const logoutHandler = () => {
     signOut(auth)
       .then(() => {
         localStorage.clear();
@@ -15,7 +16,7 @@ export default function Header() {
         navigate("/");
       })
       .catch((err) => alert(err));
-  };
+  }; */
 
   return (
     <div className="w-full h-[60px] p-4 flex items-center">
@@ -28,10 +29,8 @@ export default function Header() {
           <button className="w-[80px] h-[40px] bg-slate-200 rounded-lg mr-3">
             <Link to="/mypage">마이페이지</Link>
           </button>
-          <button
-            onClick={logoutHandler}
-            className="w-[80px] h-[40px] bg-slate-200 rounded-lg">
-            로그아웃
+          <button className="w-[80px] h-[40px] bg-slate-200 rounded-lg">
+            <Link to="/post/create">새 글 작성</Link>
           </button>
         </>
       ) : (
