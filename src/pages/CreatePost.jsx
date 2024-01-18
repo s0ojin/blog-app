@@ -1,16 +1,17 @@
 import { useForm } from "react-hook-form";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
-import { db } from "../firebase";
+import { auth, db } from "../firebase";
 
 export default function CreatePost() {
   const { register, handleSubmit } = useForm();
+  const user = auth.currentUser;
 
   const onSubmit = async (data) => {
     console.log(data);
     // TODO: 이미지 링크로 변경 저장, author 변경
 
     await addDoc(collection(db, "posts"), {
-      author: "박수진",
+      author: user.displayName,
       title: data.title,
       content: data.content,
       summary: data.summary,
