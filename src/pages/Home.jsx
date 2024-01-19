@@ -5,7 +5,7 @@ import { auth, db } from "../firebase";
 import PostCard from "../components/postCard";
 
 export default function Home() {
-  const [postList, setPostList] = useState();
+  const [postList, setPostList] = useState([]);
   const [isMyPostTab, setIsMyPostTab] = useState(false);
   const user = auth.currentUser;
 
@@ -49,9 +49,10 @@ export default function Home() {
             My Posts
           </button>
         </div>
-        <ul className="grid grid-cols-4 gap-10 cursor-pointer">
-          {postList &&
-            postList.map((post) => <PostCard key={post.id} postData={post} />)}
+        <ul className="grid grid-cols-4 gap-10">
+          {postList && postList.length > 0
+            ? postList.map((post) => <PostCard key={post.id} postData={post} />)
+            : "작성된 글이 없습니다."}
         </ul>
       </main>
     </>

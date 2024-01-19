@@ -8,3 +8,6 @@
 .submit_btn {
   @apply h-14 w-[100%] rounded-lg text-white bg-slate-500;
 }
+.default_btn {
+  @apply p-2 rounded-lg border border-gray-300 text-gray-500;
+}
