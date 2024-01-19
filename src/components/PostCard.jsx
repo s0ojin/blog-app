@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { timeConverter } from "../utils/timeConverter";
 
 export default function PostCard({ postData }) {
   return (
@@ -13,7 +14,7 @@ export default function PostCard({ postData }) {
               : `${postData.data.content.slice(0, 60)} ...`}
           </p>
           <p className="mt-auto text-[12px] text-gray-400">
-            {Date(postData.data.createdAt)}
+            {timeConverter(postData.data.createdAt)}
           </p>
         </div>
         <p className="h-[10%] p-4 leading-3 text-[14px]">
