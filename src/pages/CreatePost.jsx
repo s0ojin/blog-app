@@ -8,7 +8,12 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { useEffect } from "react";
-import { useLocation, useMatch, useParams } from "react-router-dom";
+import {
+  useLocation,
+  useMatch,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 
 export default function CreatePost() {
   const { postId } = useParams();
@@ -16,6 +21,7 @@ export default function CreatePost() {
   const { register, handleSubmit, setValue } = useForm();
   const editPagePath = useMatch("/post/edit/:postId");
   const editPagePostData = useLocation().state;
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     // TODO: 이미지 링크로 변경 저장
@@ -26,8 +32,15 @@ export default function CreatePost() {
         title: data.title,
         content: data.content,
         summary: data.summary,
-        image: "",
-      });
+        image: "https://images.velog.io/velog.png",
+      })
+        .then(() => {
+          alert("글 수정이 완료되었습니다.");
+          navigate(`/post/${postId}`);
+        })
+        .catch((err) =>
+          alert("에러가 발생했습니다. 잠시 후 다시 시도해주세요."),
+        );
     } else {
       await addDoc(collection(db, "posts"), {
         author: user.displayName,
@@ -35,9 +48,16 @@ export default function CreatePost() {
         title: data.title,
         content: data.content,
         summary: data.summary,
-        image: "",
+        image: "https://images.velog.io/velog.png",
         createdAt: Timestamp.now(),
-      });
+      })
+        .then(() => {
+          alert("글 작성이 완료되었습니다.");
+          navigate("/");
+        })
+        .catch((err) =>
+          alert("에러가 발생했습니다. 잠시 후 다시 시도해주세요."),
+        );
     }
   };
 

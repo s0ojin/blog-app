@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
 import Carousel from "../components/Carousel";
-import { getDocs, query, collection } from "firebase/firestore";
-import { db } from "../firebase";
+import { getDocs, query, collection, where } from "firebase/firestore";
+import { auth, db } from "../firebase";
 import { Link } from "react-router-dom";
 
 export default function Home() {
   const [postList, setPostList] = useState();
+  const [isMyPostTab, setIsMyPostTab] = useState(false);
+  const user = auth.currentUser;
 
   const getPosts = async () => {
-    const postsRef = query(collection(db, "posts"));
+    const postsRef = isMyPostTab
+      ? query(collection(db, "posts"), where("authorId", "==", user.uid))
+      : query(collection(db, "posts"));
     const postsSnap = await getDocs(postsRef);
+
     const posts = [];
     postsSnap.forEach((post) => {
       posts.push({
@@ -22,37 +27,55 @@ export default function Home() {
 
   useEffect(() => {
     getPosts();
-  }, []);
+  }, [isMyPostTab]);
 
   return (
-    <div>
+    <>
       <Carousel />
-      <ul className="grid grid-cols-4 gap-10 m-10 cursor-pointer">
-        {postList &&
-          postList.map((post) => (
-            <li
-              key={post.id}
-              className="flex flex-col max-h-[500px] shadow-lg rounded-2xl">
-              <Link to={`/post/${post.id}`}>
-                <img src={post.data.image} className="h-[45%] object-cover" />
-                <div className="h-[45%] p-4 flex flex-col">
-                  <p className="font-bold text-[20px] mb-2">
-                    {post.data.title}
+      <main className="my-14 mx-[200px]">
+        <div className="flex gap-4 mb-10">
+          <button
+            onClick={() => {
+              setIsMyPostTab(false);
+            }}
+            className={`p-2 font-bold ${!isMyPostTab && "border-b-2"}`}>
+            All Posts
+          </button>
+          <button
+            onClick={() => {
+              setIsMyPostTab(true);
+            }}
+            className={`p-2 font-bold ${isMyPostTab && "border-b-2"}`}>
+            My Posts
+          </button>
+        </div>
+        <ul className="grid grid-cols-4 gap-10 cursor-pointer">
+          {postList &&
+            postList.map((post) => (
+              <Link key={post.id} to={`/post/${post.id}`}>
+                <li className="flex flex-col shadow-lg rounded-2xl min-h-[380px]">
+                  <img src={post.data.image} className="h-[45%] object-cover" />
+                  <div className="h-[45%] p-4 flex flex-col grow">
+                    <p className="font-bold text-[18px] mb-2">
+                      {post.data.title}
+                    </p>
+                    <p className="grow text-[14px]">
+                      {post.data.content < 60
+                        ? post.data.content
+                        : `${post.data.content.slice(0, 60)} ...`}
+                    </p>
+                    <p className="mt-auto text-[12px] text-gray-400">
+                      {Date(post.data.createdAt)}
+                    </p>
+                  </div>
+                  <p className="h-[10%] p-4 leading-3 text-[14px]">
+                    by. {post.data.author}
                   </p>
-                  <p className="">
-                    {post.data.content < 100
-                      ? post.data.content
-                      : `${post.data.content.slice(0, 100)} ...`}
-                  </p>
-                  <p className="mt-auto text-[14px] text-gray-400">
-                    {Date(post.data.createdAt)}
-                  </p>
-                </div>
-                <p className="h-[10%] p-4 leading-3">by. {post.data.author}</p>
+                </li>
               </Link>
-            </li>
-          ))}
-      </ul>
-    </div>
+            ))}
+        </ul>
+      </main>
+    </>
   );
 }
