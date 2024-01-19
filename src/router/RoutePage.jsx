@@ -16,6 +16,7 @@ export default function RoutePage() {
         <Route path="/" element={<Home />} />
         <Route path="/mypage" element={<Mypage />} />
         <Route path="/post/create" element={<CreatePost />} />
+        <Route path="/post/edit/:postId" element={<CreatePost />} />
         <Route path="/post/:postId" element={<PostDetail />} />
       </Route>
       {/* 로그아웃 필수 */}

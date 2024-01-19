@@ -27,7 +27,7 @@ export default function Home() {
   return (
     <div>
       <Carousel />
-      <ul className="grid grid-cols-3 gap-10 m-10 cursor-pointer">
+      <ul className="grid grid-cols-4 gap-10 m-10 cursor-pointer">
         {postList &&
           postList.map((post) => (
             <li
@@ -39,12 +39,16 @@ export default function Home() {
                   <p className="font-bold text-[20px] mb-2">
                     {post.data.title}
                   </p>
-                  <p className="">{post.data.content}</p>
+                  <p className="">
+                    {post.data.content < 100
+                      ? post.data.content
+                      : `${post.data.content.slice(0, 100)} ...`}
+                  </p>
                   <p className="mt-auto text-[14px] text-gray-400">
                     {Date(post.data.createdAt)}
                   </p>
                 </div>
-                <p className="h-[10%] p-4">by. {post.data.author}</p>
+                <p className="h-[10%] p-4 leading-3">by. {post.data.author}</p>
               </Link>
             </li>
           ))}
