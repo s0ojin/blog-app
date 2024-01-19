@@ -1,24 +1,53 @@
 import { useForm } from "react-hook-form";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  Timestamp,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
 import { auth, db } from "../firebase";
+import { useEffect } from "react";
+import { useLocation, useMatch, useParams } from "react-router-dom";
 
 export default function CreatePost() {
-  const { register, handleSubmit } = useForm();
+  const { postId } = useParams();
   const user = auth.currentUser;
+  const { register, handleSubmit, setValue } = useForm();
+  const editPagePath = useMatch("/post/edit/:postId");
+  const editPagePostData = useLocation().state;
 
   const onSubmit = async (data) => {
-    console.log(data);
-    // TODO: 이미지 링크로 변경 저장, author 변경
-
-    await addDoc(collection(db, "posts"), {
-      author: user.displayName,
-      title: data.title,
-      content: data.content,
-      summary: data.summary,
-      image: "",
-      createdAt: Timestamp.now(),
-    });
+    // TODO: 이미지 링크로 변경 저장
+    if (editPagePath) {
+      const postRef = doc(db, "posts", postId);
+      await updateDoc(postRef, {
+        capital: true,
+        title: data.title,
+        content: data.content,
+        summary: data.summary,
+        image: "",
+      });
+    } else {
+      await addDoc(collection(db, "posts"), {
+        author: user.displayName,
+        authorId: user.uid,
+        title: data.title,
+        content: data.content,
+        summary: data.summary,
+        image: "",
+        createdAt: Timestamp.now(),
+      });
+    }
   };
+
+  useEffect(() => {
+    if (editPagePath) {
+      setValue("title", editPagePostData.title);
+      setValue("summary", editPagePostData.summary);
+      setValue("content", editPagePostData.content);
+    }
+  }, []);
 
   return (
     <div className="p-8">
@@ -48,7 +77,9 @@ export default function CreatePost() {
           placeholder="글 본문을 적어주세요~"
           className="w-full h-[70%] p-2 outline-slate-300 mb-10"
         />
-        <button className="submit_btn">업로드</button>
+        <button type="submit" className="submit_btn">
+          {editPagePath ? "수정하기" : "업로드"}
+        </button>
       </form>
     </div>
   );

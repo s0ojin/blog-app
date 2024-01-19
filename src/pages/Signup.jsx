@@ -16,9 +16,6 @@ export default function Signup() {
     await createUserWithEmailAndPassword(auth, data.email, data.password)
       .then((res) => {
         if (res.operationType == "signIn") {
-          localStorage.setItem("userId", res.user.uid);
-          localStorage.setItem("accessToken", res.user.accessToken);
-          localStorage.setItem("refreshToken", res.user.refreshToken);
           updateProfile(auth.currentUser, { displayName: data.name });
           alert("회원가입이 완료되었습니다.");
           navigate("/");
