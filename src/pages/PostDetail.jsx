@@ -1,11 +1,12 @@
-import { Link, useParams } from "react-router-dom";
-import { doc, getDoc } from "firebase/firestore";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 
 export default function PostDetail() {
   const { postId } = useParams();
   const user = auth.currentUser;
+  const navigate = useNavigate();
   const [postData, setPostData] = useState();
 
   const getData = async () => {
@@ -15,6 +16,13 @@ export default function PostDetail() {
     if (docSnap.exists()) {
       setPostData(docSnap.data());
     }
+  };
+
+  const postDeleteHandler = async () => {
+    await deleteDoc(doc(db, "posts", postId)).then(() => {
+      alert("삭제되었습니다.");
+      navigate("/");
+    });
   };
 
   useEffect(() => {
@@ -36,7 +44,9 @@ export default function PostDetail() {
                     수정
                   </Link>
                 </button>
-                <button className="text-gray-400">삭제</button>
+                <button onClick={postDeleteHandler} className="text-gray-400">
+                  삭제
+                </button>
               </div>
             )}
           </div>
